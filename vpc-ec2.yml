@@ -34,22 +34,6 @@ Parameters:
     Description: Enter the CIDR for your Subnet
 
 
-Rules:
-  set of rules
-
-
-Mappings:
-  set of mappings
-
-
-Conditions:
-  set of conditions
-
-
-Transform:
-  set of transforms
-
-
 Resources:
 
   myVPC:
@@ -119,8 +103,3 @@ Resources:
       - Key: Name
         Value: OSfromCloudFormation
 
-
-
-
-Outputs:
-  set of outputs
