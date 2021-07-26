@@ -25,12 +25,12 @@ Parameters:
 
   myCIDRforVPC:
     Type: String
-    Default: 10.0.0.0/16
-    Description: Enter the CIDR fir your VPC
+    Default: 172.17.0.0/16
+    Description: Enter the CIDR for your VPC
 
   myCIDRforSubnet:
     Type: String
-    Default: 10.0.1.0/24
+    Default: 172.17.1.0/24
     Description: Enter the CIDR for your Subnet
 
 
@@ -61,14 +61,14 @@ Resources:
      InstanceTenancy: default
      Tags: 
      - Key: Name
-       Value: LWVPC
+       Value: VPCFromCF
 
   myInternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties: 
       Tags: 
       - Key: Name
-        Value: LWIgW
+        Value: IGWFromCF
 
   myVPCGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -82,9 +82,10 @@ Resources:
       VpcId: !Ref myVPC
       CidrBlock: !Ref myCIDRforSubnet
       AvailabilityZone: !Select   [  1,  !GetAZs  ]
+      MapPublicIpOnLaunch: true
       Tags:
       - Key: Name
-        Value: mysubnetlab1
+        Value: SubnetAFromCF
 
   myRouteTable:
     Type: AWS::EC2::RouteTable
@@ -92,7 +93,7 @@ Resources:
       VpcId:  !Ref myVPC
       Tags:
       - Key: Name
-        Value: LW RT CF
+        Value: RTFromCF
 
   myInternetRoute:
     Type: AWS::EC2::Route
@@ -116,12 +117,9 @@ Resources:
       InstanceType:  !Ref myInstanceType
       Tags:
       - Key: Name
-        Value: LWoscf
+        Value: OSfromCloudFormation
 
-  myEIP:
-    Type: AWS::EC2::EIP
-    Properties:
-      InstanceId: !Ref myFirstOSbyCF
+
 
 
 Outputs:
