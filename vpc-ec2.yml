@@ -1,0 +1,128 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+
+Description: >
+  Deploying VPC
+  from CloudFormation.
+
+
+Parameters:
+
+  myAMI:
+    Type: String
+    Default: ami-0233c2d874b811deb
+    Description: Enter the AMI for your EC2 Instance (by Default, it'll choose amzn2-ami)
+
+  myInstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - m1.small
+      - m1.large
+    Description: Enter the Instance Type for your EC2 Instance
+
+  myCIDRforVPC:
+    Type: String
+    Default: 10.0.0.0/16
+    Description: Enter the CIDR fir your VPC
+
+  myCIDRforSubnet:
+    Type: String
+    Default: 10.0.1.0/24
+    Description: Enter the CIDR for your Subnet
+
+
+Rules:
+  set of rules
+
+
+Mappings:
+  set of mappings
+
+
+Conditions:
+  set of conditions
+
+
+Transform:
+  set of transforms
+
+
+Resources:
+
+  myVPC:
+    Type: AWS::EC2::VPC
+    Properties: 
+     CidrBlock: !Ref myCIDRforVPC
+     EnableDnsHostnames: true
+     EnableDnsSupport: true
+     InstanceTenancy: default
+     Tags: 
+     - Key: Name
+       Value: LWVPC
+
+  myInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties: 
+      Tags: 
+      - Key: Name
+        Value: LWIgW
+
+  myVPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref myVPC
+      InternetGatewayId: !Ref myInternetGateway
+
+  mySubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref myVPC
+      CidrBlock: !Ref myCIDRforSubnet
+      AvailabilityZone: !Select   [  1,  !GetAZs  ]
+      Tags:
+      - Key: Name
+        Value: mysubnetlab1
+
+  myRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:  !Ref myVPC
+      Tags:
+      - Key: Name
+        Value: LW RT CF
+
+  myInternetRoute:
+    Type: AWS::EC2::Route
+    DependsOn: myInternetGateway
+    Properties:
+       RouteTableId: !Ref myRouteTable
+       DestinationCidrBlock: 0.0.0.0/0
+       GatewayId: !Ref  myInternetGateway
+
+  mySubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref mySubnetA
+      RouteTableId: !Ref myRouteTable
+
+  myFirstOSbyCF:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref myAMI
+      SubnetId: !Ref mySubnetA
+      InstanceType:  !Ref myInstanceType
+      Tags:
+      - Key: Name
+        Value: LWoscf
+
+  myEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref myFirstOSbyCF
+
+
+Outputs:
+  set of outputs
