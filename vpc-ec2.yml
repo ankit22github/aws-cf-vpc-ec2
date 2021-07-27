@@ -33,6 +33,10 @@ Parameters:
     Default: 172.17.1.0/24
     Description: Enter the CIDR for your Subnet
 
+  myKeyName:
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    Description: Select the existing key pair from your account
+
 
 Resources:
 
@@ -99,7 +103,26 @@ Resources:
       ImageId: !Ref myAMI
       SubnetId: !Ref mySubnetA
       InstanceType:  !Ref myInstanceType
+      KeyName: !Ref myKeyName
+      SecurityGroupIds: 
+      - Ref: myInstanceSecurityGroup
       Tags:
       - Key: Name
         Value: OSfromCloudFormation
 
+  myInstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: This is the Security Group launched from CF
+      VpcId: !Ref myVPC
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 0
+        ToPort: 1000
+        CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+      - IpProtocol: -1
+        CidrIp: 0.0.0.0/0
+      Tags:
+      - Key: Name
+        Value: SGFromCF
