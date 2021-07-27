@@ -126,3 +126,25 @@ Resources:
       Tags:
       - Key: Name
         Value: SGFromCF
+
+
+Outputs:
+
+  Ec2PublicIp:
+    Description: Public Ip of the Ec2 Instance
+    Value: !GetAtt myFirstOSbyCF.PublicIp
+
+  Ec2AvailabilityZone:
+    Description: AZ of the Ec2 Instance
+    Value: !GetAtt myFirstOSbyCF.AvailabilityZone
+
+  Ec2InstanceId:
+    Description: Instance ID of Ec2 Instance
+    Value: !Ref myFirstOSbyCF
+
+  Ec2PublicDNS:
+    Description: Public DNS of Ec2 Instance
+    Value: !GetAtt myFirstOSbyCF.PublicDnsName
+
+
+
